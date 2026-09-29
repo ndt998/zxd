@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morning Pyramid Workout — Sổ tập &amp; Streak</title>
+<meta name="description" content="Bài tập kim tự tháp buổi sáng: 200 reps + 2 phút plank. Audio hướng dẫn, lịch tick và bộ đếm streak.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+<style>
+  :root{
+    --cream:#FBF7EE; --ink:#26313B; --muted:#6B7683;
+    --teal:#12A5A0; --teal-d:#0C7F7C; --teal-l:#DFF6F3;
+    --orange:#F5820D; --orange-d:#D96F00; --orange-l:#FFE9C7;
+    --card:#FFFFFF; --line:#EADFC8; --danger:#D64545;
+    --radius:18px; --shadow:0 6px 22px rgba(60,45,20,.10);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:var(--cream); color:var(--ink); line-height:1.55;
+  }
+  img{max-width:100%; display:block;}
+  button{font:inherit; cursor:pointer; border:none; background:none; color:inherit;}
+  /* ---------- HERO ---------- */
+  header.hero{
+    background:linear-gradient(135deg,#FFE9C7 0%,#FFF7E8 45%,#DFF6F3 100%);
+    border-bottom:3px solid var(--line);
+    padding:34px 20px 30px;
+  }
+  .hero-inner{max-width:1000px; margin:0 auto; display:flex; gap:28px; align-items:center; flex-wrap:wrap;}
+  .hero-img{width:230px; border-radius:var(--radius); box-shadow:var(--shadow); border:4px solid #fff; flex:0 0 auto;}
+  .hero-txt{flex:1 1 320px;}
+  .hero-txt h1{font-size:clamp(1.6rem,4vw,2.5rem); letter-spacing:.5px; color:var(--orange-d); text-transform:uppercase;}
+  .hero-txt h1 span{color:var(--teal-d);}
+  .hero-txt p.sub{margin:.4rem 0 1rem; color:var(--muted); font-weight:600;}
+  .chips{display:flex; gap:8px; flex-wrap:wrap;}
+  .chip{background:#fff; border:2px solid var(--line); border-radius:999px; padding:4px 14px; font-size:.85rem; font-weight:700;}
+  .chip.teal{border-color:var(--teal); color:var(--teal-d);}
+  .chip.orange{border-color:var(--orange); color:var(--orange-d);}
+  /* ---------- PLAYER BAR ---------- */
+  .playerbar{
+    position:sticky; top:0; z-index:50;
+    background:rgba(255,255,255,.92); backdrop-filter:blur(8px);
+    border-bottom:2px solid var(--line);
+    padding:10px 16px;
+  }
+  .player-inner{max-width:1000px; margin:0 auto; display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .pbtn{
+    width:42px; height:42px; border-radius:50%;
+    background:var(--teal); color:#fff; font-size:1.05rem;
+    display:inline-flex; align-items:center; justify-content:center;
+    transition:transform .12s, background .12s; flex:0 0 auto;
+  }
+  .pbtn:hover{transform:scale(1.08); background:var(--teal-d);}
+  .pbtn.main{width:50px; height:50px; background:var(--orange); font-size:1.25rem;}
+  .pbtn.main:hover{background:var(--orange-d);}
+  .pinfo{flex:1 1 200px; min-width:160px;}
+  .pinfo .ptitle{font-weight:800; font-size:.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .pinfo .ptime{font-size:.78rem; color:var(--muted); font-variant-numeric:tabular-nums;}
+  #pSeek{flex:2 1 180px; accent-color:var(--orange); height:6px; cursor:pointer;}
+  #pVol{width:90px; accent-color:var(--teal); cursor:pointer;}
+  /* ---------- LAYOUT ---------- */
+  main{max-width:1000px; margin:0 auto; padding:26px 16px 60px;}
+  section{margin-bottom:44px;}
+  h2{font-size:1.35rem; color:var(--teal-d); margin-bottom:6px; display:flex; align-items:center; gap:8px;}
+  h2 .em{font-size:1.5rem;}
+  .sect-sub{color:var(--muted); font-size:.9rem; margin-bottom:16px;}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--teal); color:#fff; font-weight:700;
+    border-radius:999px; padding:10px 22px; font-size:.95rem;
+    box-shadow:0 4px 14px rgba(18,165,160,.35);
+    transition:transform .12s, background .12s;
+  }
+  .btn:hover{transform:translateY(-2px); background:var(--teal-d);}
+  .btn.orange{background:var(--orange); box-shadow:0 4px 14px rgba(245,130,13,.35);}
+  .btn.orange:hover{background:var(--orange-d);}
+  .btn.ghost{background:#fff; color:var(--ink); border:2px solid var(--line); box-shadow:none;}
+  .btn.ghost:hover{border-color:var(--teal); color:var(--teal-d); background:var(--teal-l);}
+  .btn.danger{background:#fff; color:var(--danger); border:2px solid #F3C1C1; box-shadow:none;}
+  /* ---------- CARDS ---------- */
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(255px,1fr)); gap:18px;}
+  .card{
+    background:var(--card); border-radius:var(--radius); overflow:hidden;
+    border:2px solid var(--line); box-shadow:var(--shadow);
+    display:flex; flex-direction:column;
+    transition:transform .15s, border-color .15s;
+  }
+  .card:hover{transform:translateY(-3px);}
+  .card.playing{border-color:var(--orange); box-shadow:0 0 0 4px var(--orange-l), var(--shadow);}
+  .thumb{position:relative;}
+  .thumb img{width:100%; aspect-ratio:1/1; object-fit:cover;}
+  .badge{
+    position:absolute; top:10px; left:10px;
+    background:var(--teal); color:#fff; font-weight:800; font-size:.75rem;
+    padding:3px 12px; border-radius:999px; letter-spacing:.4px;
+  }
+  .badge.rest{background:#5B8DEF;}
+  .badge.full{background:var(--orange);}
+  .dur{
+    position:absolute; bottom:10px; right:10px;
+    background:rgba(38,49,59,.82); color:#fff; font-size:.75rem; font-weight:700;
+    padding:2px 10px; border-radius:999px; font-variant-numeric:tabular-nums;
+  }
+  .card .body{padding:14px 16px 16px; display:flex; flex-direction:column; gap:8px; flex:1;}
+  .card h3{font-size:1.05rem; color:var(--ink);}
+  .card h3 small{display:block; font-size:.8rem; color:var(--muted); font-weight:600;}
+  .meta{font-size:.82rem; color:var(--muted); font-weight:600;}
+  .tip{
+    background:var(--orange-l); border-left:4px solid var(--orange);
+    border-radius:0 10px 10px 0; padding:8px 12px; font-size:.83rem; color:#7A4A00;
+  }
+  .card .btn{align-self:flex-start; margin-top:auto; padding:8px 18px; font-size:.88rem;}
+  /* ---------- TIPS SECTION ---------- */
+  .tips-wrap{display:flex; gap:22px; align-items:flex-start; flex-wrap:wrap;}
+  .tips-wrap img{width:250px; border-radius:var(--radius); border:4px solid #fff; box-shadow:var(--shadow);}
+  .tips-list{flex:1 1 320px; display:grid; gap:10px;}
+  .tips-list li{list-style:none; background:#fff; border:2px solid var(--line); border-radius:12px; padding:10px 14px; font-size:.9rem;}
+  .tips-list li b{color:var(--teal-d);}
+  /* ---------- LOG / STREAK ---------- */
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:18px;}
+  .stat{
+    background:#fff; border:2px solid var(--line); border-radius:14px;
+    padding:12px 16px; text-align:center;
+  }
+  .stat .num{font-size:1.7rem; font-weight:800; color:var(--orange-d); font-variant-numeric:tabular-nums;}
+  .stat .lbl{font-size:.78rem; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.4px;}
+  .stat.fire .num{animation:pulse 1.6s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+  .tick-row{display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:8px;}
+  #tickToday{font-size:1.1rem; padding:14px 30px;}
+  .last-tick{font-size:.85rem; color:var(--muted); font-weight:600;}
+  .streak-warn{color:var(--danger); font-weight:700; font-size:.88rem;}
+  /* ---------- CALENDAR ---------- */
+  .cal{background:#fff; border:2px solid var(--line); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow);}
+  .cal-head{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;}
+  .cal-head h3{font-size:1.05rem; text-transform:capitalize; color:var(--ink);}
+  .navbtn{width:36px; height:36px; border-radius:10px; background:var(--teal-l); color:var(--teal-d); font-weight:800; font-size:1.1rem;}
+  .navbtn:hover{background:var(--teal); color:#fff;}
+  .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:6px;}
+  .dow{text-align:center; font-size:.72rem; font-weight:800; color:var(--muted); padding:4px 0; text-transform:uppercase;}
+  .day{
+    aspect-ratio:1/1; border-radius:12px; border:2px solid transparent;
+    background:var(--cream); display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:2px;
+    font-weight:700; font-size:.9rem; color:var(--ink);
+    transition:transform .1s, background .1s;
+  }
+  .day:hover:not(:disabled){transform:scale(1.06); background:var(--teal-l);}
+  .day:disabled{opacity:.35; cursor:not-allowed;}
+  .day .pill{font-size:.62rem; font-weight:800; padding:1px 7px; border-radius:999px; background:#E4E7EC; color:var(--muted);}
+  .day.full{background:var(--teal); color:#fff;}
+  .day.full .pill{background:rgba(255,255,255,.25); color:#fff;}
+  .day.part{background:var(--orange-l); border-color:var(--orange); color:var(--orange-d);}
+  .day.part .pill{background:var(--orange); color:#fff;}
+  .day.today{border-color:var(--ink); box-shadow:0 0 0 3px var(--orange-l);}
+  .day.empty{background:transparent; pointer-events:none;}
+  .cal-legend{display:flex; gap:16px; flex-wrap:wrap; margin-top:12px; font-size:.78rem; color:var(--muted); font-weight:600;}
+  .dot{display:inline-block; width:12px; height:12px; border-radius:4px; vertical-align:-2px; margin-right:5px;}
+  .backup-row{margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;}
+  .backup-row .btn{padding:7px 16px; font-size:.8rem;}
+  /* ---------- MODAL ---------- */
+  .overlay{position:fixed; inset:0; background:rgba(30,25,15,.5); display:none; align-items:center; justify-content:center; z-index:100; padding:16px;}
+  .overlay.open{display:flex;}
+  .modal{background:#fff; border-radius:20px; padding:24px; max-width:430px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,.3);}
+  .modal h3{color:var(--teal-d); margin-bottom:4px;}
+  .modal .msub{font-size:.85rem; color:var(--muted); margin-bottom:14px;}
+  .quick{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;}
+  .quick button{border:2px solid var(--line); border-radius:999px; padding:6px 16px; font-weight:800; background:var(--cream);}
+  .quick button.on{background:var(--teal); border-color:var(--teal); color:#fff;}
+  .modal label{display:block; font-size:.85rem; font-weight:700; margin:10px 0 4px;}
+  .modal input[type=range]{width:100%; accent-color:var(--orange);}
+  .modal input[type=number]{width:110px; padding:7px 10px; border:2px solid var(--line); border-radius:10px; font:inherit;}
+  .modal .hint{font-size:.78rem; color:var(--muted); margin-top:10px;}
+  .mrow{display:flex; gap:10px; margin-top:18px; flex-wrap:wrap;}
+  .mrow .btn{padding:9px 18px; font-size:.9rem;}
+  footer{border-top:2px solid var(--line); padding:22px 16px; text-align:center; color:var(--muted); font-size:.82rem;}
+  @media (max-width:560px){
+    .hero-img{width:100%;}
+    .day{font-size:.78rem; border-radius:9px;}
+    .day .pill{font-size:.55rem;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <img class="hero-img" src="images/hero.jpg" alt="Huấn luyện viên hoạt họa trước kim tự tháp buổi sáng">
+    <div class="hero-txt">
+      <h1>Morning <span>Pyramid</span> Workout</h1>
+      <p class="sub">Thử thách kỷ luật 30 ngày • 6:00 sáng mỗi ngày • Tập khi bụng đói</p>
+      <div class="chips">
+        <span class="chip teal">💪 200 reps</span>
+        <span class="chip teal">🧘 2 phút plank</span>
+        <span class="chip orange">⏱ ~12–13 phút</span>
+        <span class="chip orange">🔊 Giọng nữ EN + nhạc nền</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="playerbar">
+  <div class="player-inner">
+    <button class="pbtn" id="btnPrev" title="Bài trước">⏮</button>
+    <button class="pbtn main" id="btnPlay" title="Phát / tạm dừng">▶</button>
+    <button class="pbtn" id="btnNext" title="Bài tiếp">⏭</button>
+    <button class="pbtn" id="btnStop" title="Dừng">⏹</button>
+    <div class="pinfo">
+      <div class="ptitle" id="pTitle">Sẵn sàng — bấm ▶ hoặc chọn bài bên dưới</div>
+      <div class="ptime" id="pTime">0:00 / 0:00</div>
+    </div>
+    <input type="range" id="pSeek" min="0" max="100" value="0" step="0.1" title="Tua">
+    <input type="range" id="pVol" min="0" max="1" value="0.9" step="0.05" title="Âm lượng">
+  </div>
+</div>
+
+<main>
+  <!-- ============ ROUTINE ============ -->
+  <section id="routine">
+    <h2><span class="em">🏋️</span> Lộ trình buổi tập</h2>
+    <p class="sect-sub">Mỗi bài có audio riêng: giọng nữ hướng dẫn + beep giữ nhịp 2,5 giây/rep (beep nhấn mạnh mỗi mốc 10 rep). Giữa các bài là audio nghỉ 30 giây.</p>
+    <button class="btn orange" id="playAll" style="margin-bottom:18px;">▶ Chạy toàn bộ buổi tập (~12 phút 48 giây)</button>
+    <div class="grid">
+
+      <article class="card" data-track="intro">
+        <div class="thumb"><img src="images/hero.jpg" alt="Minh họa mở đầu"><span class="badge">Mở đầu</span><span class="dur">0:18</span></div>
+        <div class="body">
+          <h3>Intro <small>Khởi động tinh thần</small></h3>
+          <p class="meta">Lời chào + nhắc uống nước, thở sâu</p>
+          <p class="tip">💡 Tập khi bụng đói. Uống một chút nước và thở sâu trước khi bắt đầu.</p>
+          <button class="btn play" data-track="intro">▶ Phát</button>
+        </div>
+      </article>
+
+      <article class="card" data-track="pushups">
+        <div class="thumb"><img src="images/pushups.jpg" alt="Minh họa hít đất"><span class="badge">Bài 1</span><span class="dur">1:07</span></div>
+        <div class="body">
+          <h3>20 Push Ups <small>Hít đất</small></h3>
+          <p class="meta">20 reps • beep mỗi 2,5s • cue giữa bài &amp; 10 rep cuối</p>
+          <p class="tip">💡 Giữ core chặt, lưng thẳng, ngực gần chạm sàn. Hạ xuống đầu gối nếu cần.</p>
+          <button class="btn play" data-track="pushups">▶ Phát</button>
+        </div>
+      </article>
+
+      <article class="card" data-track="squats">
+        <div class="thumb"><img src="images/squats.jpg" alt="Minh họa squat"><span class="badge">Bài 2</span><span class="dur">1:30</span></div>
+        <div class="body">
+          <h3>30 Air Squats <small>Squat</small></h3>
+          <p class="meta">30 reps • beep mỗi 2,5s</p>
+          <p class="tip">💡 Đẩy hông ra sau như ngồi ghế, đầu gối theo hướng mũi chân.</p>
+          <button class="btn play" data-track="squats">▶ Phát</button>
+        </div>
+      </article>
+
+      <article class="card" data-track="mountain">
+        <div class="thumb"><img src="images/mountain.jpg" alt="Minh họa mountain climbers"><span class="badge">Bài 3</span><span class="dur">1:56</span></div>
+        <div class="body">
+          <h3>40 Mountain Climbers <small>Chạy leo núi</small></h3>
+          <p class="meta">40 reps • beep mỗi 2,5s</p>
+          <p class="tip">💡 Hông thấp, core chặt, nhanh nhưng có kiểm soát.</p>
+          <button class="btn play" data-track="mountain">▶ Phát</button>
+        </div>
+      </article>
+
+      <article class="card" data-track="jacks">
+        <div class="thumb"><img src="images/jacks.jpg" alt="Minh họa jumping jacks"><span class="badge">Bài 4</span><span class="dur">2:17</span></div>
+        <div class="body">
+          <h3>50 Jumping Jacks <small>Bật nhảy</small></h3>
+          <p class="meta">50 reps • beep mỗi 2,5s</p>
+          <p class="tip">💡 Tiếp đất nhẹ bằng mũi chân, tay vươn thẳng qua đầu.</p>
+          <button class="btn play" data-track="jacks">▶ Phát</button>
+        </div>
+      </article>
+
+      <article class="card" data-track="highknees">
+        <div class="thumb"><img src="images/highknees.jpg" alt="Minh họa nâng cao đùi"><span class="badge">Bài 5</span><span class="dur">2:43</span></div>
+        <div class="body">
+          <h3>60 High Knees <small>Nâng cao đùi</small></h3>
+          <p class="meta">60 reps • beep mỗi 2,5s</p>
+          <p class="tip">💡 Đứng thẳng người, gối nâng ngang hông.</p>
+          <button class="btn play" data-track="highknees">▶ Phát</button>
+        </div>
+      </article>
+
+      <article class="card" data-track="plank">
+        <div class="thumb"><img src="images/plank.jpg" alt="Minh họa plank"><span class="badge">Bài 6</span><span class="dur">2:24</span></div>
+        <div class="body">
+          <h3>2 phút Plank <small>Giữ tư thế</small></h3>
+          <p class="meta">120s • tick mỗi 15s • cổ vũ ở 30/60/90s • đếm ngược 10→1</p>
+          <p class="tip">💡 Khủy tay dưới vai, thân thẳng như tấm ván, không thả hông, thở đều.</p>
+          <button class="btn play" data-track="plank">▶ Phát</button>
+        </div>
+      </article>
+
+      <article class="card" data-track="rest">
+        <div class="thumb"><img src="images/rest.jpg" alt="Minh họa nghỉ ngơi"><span class="badge rest">Nghỉ</span><span class="dur">0:32</span></div>
+        <div class="body">
+          <h3>Rest 30s <small>Nghỉ giữa bài (dùng 5 lần)</small></h3>
+          <p class="meta">15s: “còn một nửa” • 25–30s: đếm ngược 5→0</p>
+          <p class="tip">💡 Đừng ngồi — đứng vận động nhẹ và thở đều trong lúc nghỉ.</p>
+          <button class="btn play" data-track="rest">▶ Phát</button>
+        </div>
+      </article>
+
+      <article class="card" data-track="full">
+        <div class="thumb"><img src="images/hero.jpg" alt="Toàn bộ buổi tập"><span class="badge full">Full</span><span class="dur">15:06</span></div>
+        <div class="body">
+          <h3>Toàn buổi (1 file) <small>Intro → 6 bài → 5 lần nghỉ → plank</small></h3>
+          <p class="meta">File ghép sẵn để nghe offline không cần trang web</p>
+          <p class="tip">💡 Tải file này vào điện thoại để tập ở nơi không có mạng.</p>
+          <button class="btn play" data-track="full">▶ Phát</button>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ TIPS ============ -->
+  <section id="tips">
+    <h2><span class="em">📌</span> Lưu ý chung</h2>
+    <p class="sect-sub">Những nguyên tắc vàng của thử thách 30 ngày.</p>
+    <div class="tips-wrap">
+      <img src="images/tips.jpg" alt="Coach hoạt họa chỉ bảng lưu ý: nước, bụng đói, bình minh, biến thể dễ">
+      <ul class="tips-list">
+        <li>💧 <b>Uống nước</b> một chút trước tập và bù nước ngay sau buổi tập.</li>
+        <li>🍽️ <b>Tập khi bụng đói</b> — đúng tinh thần thử thách buổi sáng 6:00.</li>
+        <li>🌅 <b>Khung giờ cố định:</b> 6:00 sáng hằng ngày (đã có nhắc lặp lại).</li>
+        <li>🫁 <b>Thở sâu</b> trong lúc nghỉ; không ngồi xuống giữa các bài.</li>
+        <li>🧎 <b>Biến thể dễ:</b> hít đất bằng đầu gối nếu chưa đủ sức — quan trọng là đủ rep.</li>
+        <li>🎧 <b>Đeo tai nghe</b> để nghe rõ beep giữ nhịp và lời đếm mốc trong audio.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ LOG / CALENDAR ============ -->
+  <section id="log">
+    <h2><span class="em">🗓️</span> Nhật ký tập &amp; streak</h2>
+    <p class="sect-sub">Bấm tick sau mỗi buổi tập. Thời điểm bấm tick được lưu lại và dùng để tính chuỗi ngày liên tiếp (streak).</p>
+
+    <div class="stats">
+      <div class="stat fire"><div class="num" id="stCur">0</div><div class="lbl">🔥 Streak hiện tại</div></div>
+      <div class="stat"><div class="num" id="stBest">0</div><div class="lbl">🏆 Streak dài nhất</div></div>
+      <div class="stat"><div class="num" id="stTotal">0</div><div class="lbl">✅ Tổng buổi đã ghi</div></div>
+      <div class="stat"><div class="num" id="stMonth">0%</div><div class="lbl">📅 Tháng này</div></div>
+    </div>
+
+    <div class="tick-row">
+      <button class="btn orange" id="tickToday">✓ Tick hôm nay đã tập</button>
+      <span class="last-tick" id="lastTick">Chưa có ghi nhận nào.</span>
+    </div>
+    <p class="streak-warn" id="streakWarn" style="margin-bottom:14px;"></p>
+
+    <div class="cal">
+      <div class="cal-head">
+        <button class="navbtn" id="calPrev" title="Tháng trước">‹</button>
+        <h3 id="calTitle"></h3>
+        <div style="display:flex; gap:8px;">
+          <button class="navbtn" id="calToday" title="Về hôm nay" style="width:auto; padding:0 12px; font-size:.8rem;">Hôm nay</button>
+          <button class="navbtn" id="calNext" title="Tháng sau">›</button>
+        </div>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-legend">
+        <span><span class="dot" style="background:var(--teal);"></span>Hoàn thành 100%</span>
+        <span><span class="dot" style="background:var(--orange);"></span>Một phần (%)</span>
+        <span><span class="dot" style="background:#E4E7EC;"></span>Chưa tập</span>
+        <span>✏️ Bấm vào một ngày để sửa / xoá</span>
+      </div>
+      <div class="backup-row">
+        <button class="btn ghost" id="btnExport">⬇ Xuất backup (JSON)</button>
+        <button class="btn ghost" id="btnImport">⬆ Nhập backup</button>
+        <input type="file" id="fileImport" accept=".json,application/json" style="display:none;">
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Morning Pyramid Workout • Nguồn: Saitama Fitness — 30 Day Discipline Challenge •
+  Dữ liệu lưu trong trình duyệt của bạn (localStorage) — hãy xuất backup định kỳ.
+</footer>
+
+<!-- ============ MODAL ============ -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3 id="mTitle">Ghi nhận tập luyện</h3>
+    <p class="msub" id="mSub"></p>
+    <div class="quick" id="mQuick">
+      <button data-pct="100">100%</button>
+      <button data-pct="75">75%</button>
+      <button data-pct="50">50%</button>
+      <button data-pct="25">25%</button>
+    </div>
+    <label>Mức hoàn thành: <b id="mPctLabel">100%</b> <span style="color:var(--muted); font-weight:600;" id="mMinLabel"></span></label>
+    <input type="range" id="mPct" min="5" max="100" step="5" value="100">
+    <label>Hoặc nhập số phút thực tập:</label>
+    <input type="number" id="mMin" min="1" max="90" placeholder="vd: 8">
+    <p class="hint">⏰ Thời điểm bạn bấm lưu sẽ được ghi lại và dùng để tính streak theo ngày.</p>
+    <div class="mrow">
+      <button class="btn orange" id="mSave">💾 Lưu ghi nhận</button>
+      <button class="btn danger" id="mDel">🗑 Xoá</button>
+      <button class="btn ghost" id="mClose">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<audio id="audio" preload="metadata"></audio>
+
+<script>
+"use strict";
+/* ================= DATA ================= */
+var TRACKS = {
+  intro:    {file:"audio/01_intro.mp3",    dur:17.81,  label:"Intro — Khởi động tinh thần"},
+  pushups:  {file:"audio/02_pushups.mp3",  dur:67.03,  label:"Bài 1 • 20 Push Ups"},
+  squats:   {file:"audio/03_squats.mp3",   dur:90.08,  label:"Bài 2 • 30 Air Squats"},
+  mountain: {file:"audio/04_mountain.mp3", dur:115.97, label:"Bài 3 • 40 Mountain Climbers"},
+  jacks:    {file:"audio/05_jacks.mp3",    dur:137.05, label:"Bài 4 • 50 Jumping Jacks"},
+  highknees:{file:"audio/06_highknees.mp3",dur:162.85, label:"Bài 5 • 60 High Knees"},
+  plank:    {file:"audio/07_plank.mp3",    dur:143.61, label:"Bài 6 • 2 phút Plank"},
+  rest:     {file:"audio/rest_30s.mp3",    dur:32.00,  label:"Nghỉ 30 giây"},
+  full:     {file:"audio/full_workout.mp3",dur:906.29, label:"Toàn buổi (file ghép)"}
+};
+var QUEUE = ["intro","pushups","rest","squats","rest","mountain","rest","jacks","rest","highknees","rest","plank"];
+var FULL_MIN = 12.8; /* tổng phút ước tính của toàn bộ routine */
+
+/* ================= STORAGE (fallback nếu iframe chặn localStorage) ================= */
+var store = (function(){
+  try{
+    localStorage.setItem("__pw_test","1"); localStorage.removeItem("__pw_test");
+    return localStorage;
+  }catch(e){
+    var mem = {};
+    return {
+      getItem:function(k){ return (k in mem)? mem[k] : null; },
+      setItem:function(k,v){ mem[k]=String(v); },
+      removeItem:function(k){ delete mem[k]; }
+    };
+  }
+})();
+var LOG_KEY = "pyramid_workout_log_v1";
+function loadLog(){
+  try{ return JSON.parse(store.getItem(LOG_KEY)) || {}; }catch(e){ return {}; }
+}
+function saveLog(log){ store.setItem(LOG_KEY, JSON.stringify(log)); }
+var LOG = loadLog();
+
+/* ================= HELPERS ================= */
+function pad(n){ return (n<10?"0":"")+n; }
+function keyOf(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+function todayKey(){ return keyOf(new Date()); }
+function parseKey(k){ var p=k.split("-"); return new Date(+p[0], +p[1]-1, +p[2]); }
+function addDays(k, n){ var d=parseKey(k); d.setDate(d.getDate()+n); return keyOf(d); }
+function fmtDate(k){ var p=k.split("-"); return p[2]+"/"+p[1]+"/"+p[0]; }
+function fmtClock(ts){ var d=new Date(ts); return pad(d.getHours())+":"+pad(d.getMinutes()); }
+function fmtDur(s){ s=Math.round(s); return Math.floor(s/60)+":"+pad(s%60); }
+function $(id){ return document.getElementById(id); }
+
+/* ================= PLAYER ================= */
+var audio = $("audio");
+var queue = QUEUE.slice(), qIdx = -1;
+var pTitle=$("pTitle"), pTime=$("pTime"), pSeek=$("pSeek"), pVol=$("pVol"), btnPlay=$("btnPlay");
+
+function currentId(){ return (qIdx>=0 && qIdx<queue.length)? queue[qIdx] : null; }
+function loadIdx(i, autoplay){
+  qIdx = i;
+  var id = queue[i];
+  audio.src = TRACKS[id].file;
+  pTitle.textContent = (id==="rest" ? "Nghỉ 30s" : TRACKS[id].label) + "  ("+(i+1)+"/"+queue.length+")";
+  pSeek.max = TRACKS[id].dur; pSeek.value = 0;
+  pTime.textContent = "0:00 / "+fmtDur(TRACKS[id].dur);
+  markPlaying();
+  if(autoplay){ audio.play().catch(function(){}); }
+}
+function playTrack(id){
+  if(id==="full"){ queue=["full"]; } else { queue=QUEUE.slice(); }
+  loadIdx(queue.indexOf(id), true);
+}
+function togglePlay(){
+  if(qIdx<0){ loadIdx(0,true); return; }
+  if(audio.paused){ audio.play().catch(function(){}); } else { audio.pause(); }
+}
+function nextTrack(auto){
+  if(qIdx < queue.length-1){ loadIdx(qIdx+1, true); }
+  else if(!auto){ loadIdx(qIdx,false); }
+  else { btnPlay.textContent="▶"; markPlaying(); }
+}
+function prevTrack(){
+  if(audio.currentTime>3){ audio.currentTime=0; return; }
+  if(qIdx>0){ loadIdx(qIdx-1,true); }
+}
+function stopPlay(){ audio.pause(); audio.currentTime=0; qIdx=-1; queue=QUEUE.slice();
+  pTitle.textContent="Sẵn sàng — bấm ▶ hoặc chọn bài bên dưới"; pTime.textContent="0:00 / 0:00"; pSeek.value=0;
+  btnPlay.textContent="▶"; markPlaying(); }
+
+btnPlay.onclick = togglePlay;
+$("btnNext").onclick = function(){ nextTrack(false); };
+$("btnPrev").onclick = prevTrack;
+$("btnStop").onclick = stopPlay;
+$("playAll").onclick = function(){ queue=QUEUE.slice(); loadIdx(0,true); };
+pVol.oninput = function(){ audio.volume = +pVol.value; };
+audio.volume = 0.9;
+pSeek.oninput = function(){ try{ audio.currentTime = +pSeek.value; }catch(e){} };
+audio.addEventListener("play",  function(){ btnPlay.textContent="⏸"; markPlaying(); });
+audio.addEventListener("pause", function(){ btnPlay.textContent="▶"; markPlaying(); });
+audio.addEventListener("ended", function(){ nextTrack(true); });
+audio.addEventListener("timeupdate", function(){
+  var d = audio.duration || TRACKS[currentId()] && TRACKS[currentId()].dur || 0;
+  if(d>0){ pSeek.max=d; pSeek.value=audio.currentTime; }
+  pTime.textContent = fmtDur(audio.currentTime)+" / "+fmtDur(d);
+});
+function markPlaying(){
+  var id = currentId();
+  var cards = document.querySelectorAll(".card");
+  for(var i=0;i<cards.length;i++){
+    var on = (cards[i].getAttribute("data-track")===id) && !audio.paused && qIdx>=0;
+    cards[i].classList.toggle("playing", on);
+  }
+}
+document.querySelectorAll(".play").forEach(function(b){
+  b.onclick = function(){ playTrack(b.getAttribute("data-track")); };
+});
+
+/* ================= STREAK & STATS ================= */
+function calcStreaks(){
+  var keys = Object.keys(LOG).sort();
+  var set = {}; keys.forEach(function(k){ set[k]=1; });
+  var end = todayKey();
+  if(!set[end]) end = addDays(end,-1);
+  var cur=0, d=end;
+  while(set[d]){ cur++; d=addDays(d,-1); }
+  var best=0, run=0, prevK=null;
+  keys.forEach(function(k){
+    run = (prevK && addDays(prevK,1)===k) ? run+1 : 1;
+    if(run>best) best=run;
+    prevK=k;
+  });
+  return {cur:cur, best:best};
+}
+function renderStats(){
+  var s = calcStreaks();
+  $("stCur").textContent = s.cur;
+  $("stBest").textContent = s.best;
+  var keys = Object.keys(LOG);
+  $("stTotal").textContent = keys.length;
+  var now = new Date();
+  var mk = now.getFullYear()+"-"+pad(now.getMonth()+1);
+  var inMonth = keys.filter(function(k){ return k.indexOf(mk)===0; });
+  var pctMonth = Math.round(100*inMonth.length/now.getDate());
+  $("stMonth").textContent = pctMonth+"%";
+  /* last tick */
+  var last = null;
+  keys.forEach(function(k){
+    var e=LOG[k];
+    if(e && e.ts && (!last || e.ts>last.ts)) last={k:k, e:e};
+  });
+  $("lastTick").textContent = last
+    ? "Lần tick gần nhất: "+fmtDate(last.k)+" lúc "+fmtClock(last.e.ts)+" • "+last.e.pct+"%"
+    : "Chưa có ghi nhận nào — tick nút cam sau buổi tập đầu tiên!";
+  /* warn */
+  var warn = "";
+  if(!LOG[todayKey()]){
+    warn = (s.cur>0)
+      ? "⚠️ Hôm nay chưa tick — tick ngay để giữ chuỗi "+s.cur+" ngày!"
+      : "🌱 Bắt đầu chuỗi ngày đầu tiên của bạn ngay hôm nay!";
+  }
+  $("streakWarn").textContent = warn;
+}
+
+/* ================= CALENDAR ================= */
+var MONTHS = ["Tháng 1","Tháng 2","Tháng 3","Tháng 4","Tháng 5","Tháng 6","Tháng 7","Tháng 8","Tháng 9","Tháng 10","Tháng 11","Tháng 12"];
+var DOW = ["T2","T3","T4","T5","T6","T7","CN"];
+var view = new Date(); view = {y:view.getFullYear(), m:view.getMonth()};
+
+function renderCal(){
+  $("calTitle").textContent = MONTHS[view.m]+" "+view.y;
+  var grid = $("calGrid");
+  grid.innerHTML = "";
+  DOW.forEach(function(d){
+    var el=document.createElement("div"); el.className="dow"; el.textContent=d; grid.appendChild(el);
+  });
+  var first = new Date(view.y, view.m, 1);
+  var lead = (first.getDay()+6)%7;
+  var dim = new Date(view.y, view.m+1, 0).getDate();
+  var tk = todayKey();
+  for(var i=0;i<lead;i++){
+    var e=document.createElement("div"); e.className="day empty"; grid.appendChild(e);
+  }
+  for(var d=1; d<=dim; d++){
+    (function(d){
+      var k = view.y+"-"+pad(view.m+1)+"-"+pad(d);
+      var btn = document.createElement("button");
+      btn.className = "day";
+      var rec = LOG[k];
+      if(rec){ btn.classList.add(rec.pct>=100 ? "full" : "part"); }
+      if(k===tk){ btn.classList.add("today"); }
+      if(k>tk){ btn.disabled = true; }
+      var inner = '<span class="dnum">'+d+'</span>';
+      inner += rec ? '<span class="pill">'+(rec.pct>=100?"✓":rec.pct+"%")+'</span>' : '<span class="pill">—</span>';
+      btn.innerHTML = inner;
+      if(rec && rec.ts){ btn.title = fmtDate(k)+" • "+rec.pct+"% • tick lúc "+fmtClock(rec.ts); }
+      btn.onclick = function(){ openModal(k, false); };
+      grid.appendChild(btn);
+    })(d);
+  }
+}
+$("calPrev").onclick = function(){ view.m--; if(view.m<0){view.m=11; view.y--;} renderCal(); };
+$("calNext").onclick = function(){ view.m++; if(view.m>11){view.m=0; view.y++;} renderCal(); };
+$("calToday").onclick = function(){ var n=new Date(); view={y:n.getFullYear(), m:n.getMonth()}; renderCal(); };
+
+/* ================= MODAL ================= */
+var mDate=null, mFromTick=false;
+var mPct=$("mPct"), mMin=$("mMin"), mPctLabel=$("mPctLabel"), mMinLabel=$("mMinLabel");
+
+function syncPctUI(fromMin){
+  var pct = +mPct.value;
+  mPctLabel.textContent = pct+"%";
+  mMinLabel.textContent = "(≈ "+(Math.round(pct/100*FULL_MIN*10)/10).toString().replace(".",",")+" phút)";
+  var q = $("mQuick").children;
+  for(var i=0;i<q.length;i++){ q[i].classList.toggle("on", +q[i].getAttribute("data-pct")===pct); }
+  if(!fromMin){ mMin.value = ""; }
+}
+mPct.oninput = function(){ syncPctUI(false); };
+mMin.oninput = function(){
+  var v = +mMin.value;
+  if(v>0){
+    var pct = Math.max(5, Math.min(100, Math.round(v/FULL_MIN*100/5)*5));
+    mPct.value = pct; syncPctUI(true);
+  }
+};
+$("mQuick").addEventListener("click", function(ev){
+  var b = ev.target.closest("button"); if(!b) return;
+  mPct.value = b.getAttribute("data-pct"); syncPctUI(false);
+});
+function openModal(k, fromTick){
+  mDate=k; mFromTick=fromTick;
+  var rec = LOG[k];
+  $("mTitle").textContent = (fromTick? "Tick buổi tập hôm nay" : "Ghi nhận / sửa ngày") ;
+  $("mSub").textContent = fmtDate(k) + (rec && rec.ts ? " • lần tick trước: "+fmtClock(rec.ts)+" • "+rec.pct+"%" : (fromTick? " • thời điểm tick: bây giờ ("+fmtClock(Date.now())+")" : ""));
+  mPct.value = rec ? rec.pct : 100;
+  mMin.value = "";
+  syncPctUI(false);
+  $("mDel").style.display = rec ? "" : "none";
+  $("overlay").classList.add("open");
+}
+function closeModal(){ $("overlay").classList.remove("open"); }
+$("mClose").onclick = closeModal;
+$("overlay").onclick = function(ev){ if(ev.target===$("overlay")) closeModal(); };
+$("tickToday").onclick = function(){ openModal(todayKey(), true); };
+$("mSave").onclick = function(){
+  if(!mDate) return;
+  var rec = LOG[mDate] || {};
+  var ts;
+  if(mFromTick || mDate===todayKey()){ ts = Date.now(); }          /* thời điểm bấm tick */
+  else if(rec.ts){ ts = rec.ts; }
+  else { var d=parseKey(mDate); d.setHours(6,0,0,0); ts=d.getTime(); }
+  LOG[mDate] = { pct:+mPct.value, minutes: mMin.value? +mMin.value : Math.round(+mPct.value/100*FULL_MIN*10)/10, ts: ts };
+  saveLog(LOG);
+  closeModal(); renderCal(); renderStats();
+};
+$("mDel").onclick = function(){
+  if(mDate && LOG[mDate]){ delete LOG[mDate]; saveLog(LOG); }
+  closeModal(); renderCal(); renderStats();
+};
+
+/* ================= BACKUP ================= */
+$("btnExport").onclick = function(){
+  var blob = new Blob([JSON.stringify(LOG,null,2)], {type:"application/json"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "pyramid-workout-log-"+todayKey()+".json";
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+};
+$("btnImport").onclick = function(){ $("fileImport").click(); };
+$("fileImport").onchange = function(){
+  var f = this.files[0]; if(!f) return;
+  var r = new FileReader();
+  r.onload = function(){
+    try{
+      var data = JSON.parse(r.result);
+      var n=0;
+      for(var k in data){ if(/^\d{4}-\d{2}-\d{2}$/.test(k) && data[k] && typeof data[k].pct==="number"){ LOG[k]=data[k]; n++; } }
+      saveLog(LOG); renderCal(); renderStats();
+      alert("Đã nhập "+n+" bản ghi.");
+    }catch(e){ alert("File không hợp lệ."); }
+  };
+  r.readAsText(f);
+  this.value="";
+};
+
+/* ================= INIT ================= */
+renderCal();
+renderStats();
+</script>
+</body>
+</html>
